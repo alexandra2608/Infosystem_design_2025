@@ -30,12 +30,12 @@ TBD
 
 ![image](https://github.com/user-attachments/assets/634eb784-ed2e-481c-a79d-4f835a7c9b58)
 
-- books-service - Микросервис Books
-- members-service - Микросервис Members
-- loans-service - Микросервис Loans
+- books-service - микросервис Books
+- members-service - микросервис Members
+- loans-service - микросервис Loans
 - gateway - единый GraphQL Gateway, объединяющий схемы микросервисов с помощью Apollo Federation
-- library-frontend - Клиентская часть приложения
-- db.js - Подключение к базе данных
+- library-frontend - клиентская часть приложения
+- db.js - подключение к базе данных
 
 В папке каждого микросервиса находятся файлы `schema.js` (GraphQL-схема микросервиса), `resolvers.js`(функции-обработчики GraphQL-запросов) и `index.js`(запуск микросервиса). В папке gateway находится файл `index.js` - GraphQL API Gateway (Apollo Gateway).
 
