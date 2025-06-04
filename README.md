@@ -282,7 +282,7 @@ https://drive.google.com/file/d/1_lTfB5zFJjNnOQQYoOQuQPXZ9pxdZpDX/view?usp=drive
 
 ### Предварительные требования
 
-- Установленный Node.js PostgreSQL (версия ≥ 16).
+- Установленный Node.js (версия ≥ 16).
 - Установленная СУБД PostgreSQL (версия ≥ 14).
 
 В рамках выполнения лабораторной работы была выбрана тема "Система управления библиотекой". Для ее реализации было создано 3 микросервиса - Книги, Пользователи и Выдачи.
@@ -306,24 +306,27 @@ Frontend (React + Apollo Client) → API Gateway (GraphQL Gateway) → Микр�
 
 #### Шаг 1. Установка зависимостей
 Установить зависимости для каждого микросервиса:
-`cd library-service && npm install
-cd gateway && npm install
-cd ../books-service && npm install
-cd ../members-service && npm install
-cd ../loans-service && npm install
-cd ../library-frontend && npm install`
+`cd library-service && npm install`
+`cd gateway && npm install`
+`cd ../books-service && npm install`
+`cd ../members-service && npm install`
+`cd ../loans-service && npm install`
+`cd ../library-frontend && npm install`
 
 #### Шаг 2. Создание БД
 Создать базу данных, а затем таблички:
-`CREATE TABLE members (
+```sql
+CREATE TABLE members (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   phone VARCHAR(20),
   membership_date DATE DEFAULT CURRENT_DATE
-);`
+);
+```
 
-`CREATE TABLE books (
+```sql
+CREATE TABLE books (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   author VARCHAR(255) NOT NULL,
@@ -331,9 +334,11 @@ cd ../library-frontend && npm install`
   published_year INTEGER NOT NULL,
   copies_available INTEGER NOT NULL,
   genre VARCHAR(100)
-);`
+);
+```
 
-`CREATE TABLE loans (
+```sql
+CREATE TABLE loans (
     id SERIAL PRIMARY KEY,
     member_id INTEGER NOT NULL,
     book_id INTEGER NOT NULL,
@@ -350,7 +355,8 @@ cd ../library-frontend && npm install`
         FOREIGN KEY (book_id)
         REFERENCES books(id)
         ON DELETE CASCADE
-);`
+);
+```
 
 Переменные подключения к БД необходимо указать в .env или db.js.
 
