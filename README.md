@@ -308,6 +308,7 @@ Frontend (React + Apollo Client) → API Gateway (GraphQL Gateway) → Микр�
 
 #### Шаг 1. Установка зависимостей
 Установить зависимости для каждого микросервиса:
+
 `cd library-service && npm install`
 
 `cd gateway && npm install`
