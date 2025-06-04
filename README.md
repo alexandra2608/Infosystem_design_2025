@@ -13,8 +13,6 @@
 
 Цель: ознакомиться с k8s, развернуть сервис с использованием minicube.
 
-### Инструкции к лабораторной работе
-
 В ходе работы выполнено:
 
 1. Запуск кластера Minikube.
@@ -275,16 +273,23 @@ https://drive.google.com/file/d/1_lTfB5zFJjNnOQQYoOQuQPXZ9pxdZpDX/view?usp=drive
 
 Цель: ознакомиться с микросервисной архитектурой.
 
-В рамках выполнения лабораторной работы была выбрана тема "Система управления библиотекой". Для ее реализации было создано 3 микросервиса - Книги, Участники и Выдачи.
+В ходе работы выполнено:
 
-### Схема базы данных
+1. Реализация 3 микросервисов с помощью GraphQL.
+2. Каждый микросервис реализует CRUD-операции над своей сущностью.
+3. Настройка единого API Gateway с Apollo Gateway.
+4. Клиентская часть с Apollo Client - рабочий интерфейс для CRUD-операций.
+
+### Предварительные требования
+
+- Установленный Node.js PostgreSQL (версия ≥ 16).
+- Установленная СУБД PostgreSQL (версия ≥ 14).
+
+В рамках выполнения лабораторной работы была выбрана тема "Система управления библиотекой". Для ее реализации было создано 3 микросервиса - Книги, Пользователи и Выдачи.
 
 ![image](https://github.com/user-attachments/assets/b962b70f-4083-47b7-9002-27c8d7b80fad)
 
-### Итоговая структура
-
-![image](https://github.com/user-attachments/assets/634eb784-ed2e-481c-a79d-4f835a7c9b58)
-
+Структура приложения следующая:
 - books-service - микросервис Books
 - members-service - микросервис Members
 - loans-service - микросервис Loans
@@ -294,17 +299,82 @@ https://drive.google.com/file/d/1_lTfB5zFJjNnOQQYoOQuQPXZ9pxdZpDX/view?usp=drive
 
 В папке каждого микросервиса находятся файлы `schema.js` (GraphQL-схема микросервиса), `resolvers.js`(функции-обработчики GraphQL-запросов) и `index.js`(запуск микросервиса). В папке gateway находится файл `index.js` - GraphQL API Gateway (Apollo Gateway).
 
-Таким образом, структура и схема взаимодействия следующие:
+**Схема взаимодействия:**
 Frontend (React + Apollo Client) → API Gateway (GraphQL Gateway) → Микросервисы (Books, Members, Loans) → База данных (PostgreSQL)
 
-### Запуск
-Для начала необходимо создать базу данных в PostgreSQL и инициализировать таблички с соответствующими названиями и полями. Далее переменные подключения необходимо поместить в файл `.env` в корне проекта под названиями, соответствующими файлу `db.js`. После этого можно запускать приложение.
+### Инструкция
 
-Для запуска приложения необходимо открыть как проект папку library-service (находится в папке lab-2), перейти в разных окнах терминала в папки books-service, members-service, loans-service и запустить каждый из них командой `node index.js`. Для одновременной работы с микросервисами стоит перейти в папку gateway и запустить единый GraphQL Gateway аналогичной командой `node index.js`. Чтобы протестировать приложение со стороны клиента, необходимо перейти в папку library-frontend и выполнить запуск с помощью команды `npm start`.
+#### Шаг 1. Установка зависимостей
+Установить зависимости для каждого микросервиса:
+`cd library-service && npm install
+cd gateway && npm install
+cd ../books-service && npm install
+cd ../members-service && npm install
+cd ../loans-service && npm install
+cd ../library-frontend && npm install`
+
+#### Шаг 2. Создание БД
+Создать базу данных, а затем таблички:
+`CREATE TABLE members (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  phone VARCHAR(20),
+  membership_date DATE DEFAULT CURRENT_DATE
+);`
+
+`CREATE TABLE books (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  author VARCHAR(255) NOT NULL,
+  isbn VARCHAR(20) NOT NULL,
+  published_year INTEGER NOT NULL,
+  copies_available INTEGER NOT NULL,
+  genre VARCHAR(100)
+);`
+
+`CREATE TABLE loans (
+    id SERIAL PRIMARY KEY,
+    member_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
+    loan_date DATE NOT NULL,
+    return_date DATE,
+    status VARCHAR(20) NOT NULL,
+
+    CONSTRAINT fk_member
+        FOREIGN KEY (member_id)
+        REFERENCES members(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_book
+        FOREIGN KEY (book_id)
+        REFERENCES books(id)
+        ON DELETE CASCADE
+);`
+
+Переменные подключения к БД необходимо указать в .env или db.js.
+
+#### Шаг 3. Запуск
+
+Для запуска приложения необходимо перейти в разных окнах терминала в папки books-service, members-service, loans-service и запустить каждый из них командой `node index.js`. Для одновременной работы с микросервисами стоит перейти в папку gateway и запустить единый GraphQL Gateway аналогичной командой `node index.js`. Чтобы протестировать приложение со стороны клиента, необходимо перейти в папку library-frontend и выполнить запуск с помощью команды `npm start`.
+
+### Чему мы научились
+
+* Инициализировать микросервисы и настраивать раздельный запуск каждого сервиса.
+  
+* Настраивать Apollo Gateway, который объединяет схемы всех сервисов.
+  
+* Применять Apollo Federation, что позволяет сервисам самостоятельно определять свои схемы, а Gateway — агрегировать их.
+  
+* Реализовывать CRUD в микросервисах и разделять логику по слоям.
+  
+* Создавать клиентское приложение на React и настраивать Apollo Client для общения с GraphQL Gateway.
+
 
 ### Демонстрация 
 
 https://drive.google.com/file/d/1vxMlRH2uY47xELbGEXjifUOqKWOPnkJc/view?usp=sharing
+
 
 ## ЛР-3. Работа с Big Data
 
