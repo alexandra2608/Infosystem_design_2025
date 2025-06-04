@@ -15,6 +15,9 @@
 
 TBD
 
+### Демонстрация 
+
+https://drive.google.com/file/d/1_lTfB5zFJjNnOQQYoOQuQPXZ9pxdZpDX/view?usp=drive_link
 
 ## ЛР-2. Разработка микросервисной архитектуры с GraphQL
 
