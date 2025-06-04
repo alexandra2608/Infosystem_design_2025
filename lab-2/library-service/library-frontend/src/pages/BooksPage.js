@@ -50,8 +50,8 @@ const GET_BOOK_BY_ID = gql`
 `;
 
 const UPDATE_BOOK = gql`
-    mutation($title: String!, $author: String!, $isbn: String!, $publishedYear: Int!, $copiesAvailable: Int!, $genre: String) {
-        updateBook(title: $title, author: $author, isbn: $isbn, publishedYear: $publishedYear, copiesAvailable: $copiesAvailable, genre: $genre) {
+    mutation($id: ID!, $title: String!, $author: String!, $isbn: String!, $publishedYear: Int!, $copiesAvailable: Int!, $genre: String) {
+        updateBook(id: $id, title: $title, author: $author, isbn: $isbn, publishedYear: $publishedYear, copiesAvailable: $copiesAvailable, genre: $genre) {
             id
             title
             author
