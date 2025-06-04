@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hwboard-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hwboard
+  template:
+    metadata:
+      labels:
+        app: hwboard
+    spec:
+      containers:
+        - name: hwboard
+          image: hwboard:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000

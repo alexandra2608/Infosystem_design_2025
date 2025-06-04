@@ -1,0 +1,322 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: aliceblue;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: cornflowerblue;
+    padding: 15px;
+}
+
+.logo {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-links a:hover {
+    color: lightsteelblue;
+}
+
+.nav-links i {
+    margin-right: 5px;
+}
+
+h1 {
+    text-align: center;
+    color: royalblue;
+    margin-top: 2rem;
+    font-size: 2.5rem;
+}
+
+p {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #333333;
+}
+
+.main-content {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.main-content .images{
+    width: 450px;
+    height: 450px;
+    display: block;
+    margin: 20px auto;
+    border-radius: 10px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: royalblue;
+    color: #fff;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: slateblue;
+}
+
+h2 {
+    text-align: center;
+    color: royalblue;
+    font-size: 2em;
+    margin-top: 20px;
+}
+
+form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="date"],
+form input[type="tel"],
+form input[type="password"],
+form select {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin: 5px 0 15px;
+    border: 1px solid cornflowerblue;
+    border-radius: 4px;
+    background-color: #f3f6f9;
+}
+
+form label,
+form input {
+    text-align: left;
+}
+
+form input:focus,
+form select:focus {
+    border-color: royalblue;
+    outline: none;
+    box-shadow: 0 0 5px rgba(65, 105, 225, 0.5);
+}
+
+.form-footer {
+    text-align: center;
+    font-size: 0.9em;
+    margin-top: 15px;
+}
+.form-footer a {
+    color: royalblue;
+    text-decoration: none;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+}
+
+.homework-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.homework-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.homework-info {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.homework-info span {
+    display: block;
+    font-weight: bold;
+    color: royalblue;
+}
+
+.submit-button {
+    background-color: royalblue;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}
+
+.submit-btn:hover {
+    background-color: slateblue;
+}
+
+form textarea {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin: 5px 0 15px;
+    border: 1px solid cornflowerblue;
+    border-radius: 4px;
+    background-color: #f3f6f9;
+}
+
+form textarea:focus {
+    border-color: royalblue;
+    outline: none;
+    box-shadow: 0 0 5px rgba(65, 105, 225, 0.5);
+}
+
+.table-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.submission-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.submission-table th, .submission-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.submission-table th {
+    background-color: cornflowerblue;
+    color: #fff;
+    font-weight: bold;
+}
+
+.submission-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.submission-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.submission-table td {
+    color: #333;
+}
+
+.action-links {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-link, .delete-link {
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.edit-link {
+    background-color: royalblue;
+}
+
+.edit-link:hover {
+    background-color: dodgerblue;
+}
+
+.delete-link {
+    background-color: crimson;
+}
+
+.delete-link:hover {
+    background-color: darkred;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.search-container input[type="text"] {
+    width: 150px;
+    padding: 5px;
+    border: 1px solid cornflowerblue;
+    border-radius: 4px;
+    background-color: #f3f6f9;
+}
+
+.search-container button {
+    background-color: transparent;
+    border: none;
+    padding: 5px 8px;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination a, .pagination span {
+    padding: 8px 12px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #4A90E2;
+    border: 1px solid cornflowerblue;
+    border-radius: 4px;
+}
+
+.pagination a:hover {
+    background-color: #4A90E2;
+    color: white;
+}
+
+.pagination span {
+    font-weight: bold;
+}
+
+
