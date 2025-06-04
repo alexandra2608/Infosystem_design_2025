@@ -13,7 +13,261 @@
 
 Цель: ознакомиться с k8s, развернуть сервис с использованием minicube.
 
-TBD
+### Инструкции к лабораторной работе
+
+В ходе работы выполнено:
+
+1. Запуск кластера Minikube.
+2. Сборка Docker-образа приложения `hwboard`.
+3. Создание Deployment и Service для приложения.
+4. Развертывание Metrics Server для сбора метрик.
+5. Настройка Horizontal Pod Autoscaler (HPA).
+6. Установка Prometheus и Grafana с помощью Helm.
+7. Создание дашборда в Grafana для мониторинга нагрузки приложения.
+
+### Предварительные требования
+
+- Установленный Docker (версия ≥ 20.10).
+- Установленный Minikube (версия ≥ v1.30).
+- Установленный kubectl (версия совместима с Kubernetes в Minikube).
+- Установленный Helm (версия ≥ 3.0).
+
+---
+
+### Шаг 1. Запуск Minikube и окружения Docker
+
+Запустите кластер Minikube с драйвером Docker:
+
+```bash
+minikube start --driver=docker
+```
+
+Настройте окружение Docker для работы внутри Minikube (PowerShell):
+
+```bash
+minikube -p minikube docker-env --shell powershell | Invoke-Expression
+```
+
+### Шаг 2. Сборка Docker-образа приложения
+
+В корне проекта должен находиться ваш Dockerfile:
+
+```
+FROM python:3.13-slim
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY . /app/
+EXPOSE 8000
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+```
+
+Соберите локальный образ с тегом `hwboard:latest`:
+
+```
+docker build -t hwboard:latest .
+```
+
+### Шаг 3. Деплой приложения
+
+Создайте файл `deployment.yaml`:
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hwboard-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hwboard
+  template:
+    metadata:
+      labels:
+        app: hwboard
+    spec:
+      containers:
+        - name: hwboard
+          image: hwboard:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+```
+
+Создайте файл `service.yaml`:
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: hwboard-service
+spec:
+  type: NodePort
+  selector:
+    app: hwboard
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      nodePort: 30008
+```
+
+Примените манифесты:
+
+```bash
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+```
+
+Убедитесь, что поды и сервис запущены:
+
+```bash
+kubectl get pods
+kubectl get svc
+```
+
+### Шаг 4. Установка Metrics Server
+
+Подтяните и примените последнюю версию Metrics Server. Перезапустите деплоймент Metrics Server (для обновления конфигурации).
+
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl -n kube-system rollout restart deployment metrics-server
+```
+
+Проверьте сбор метрик:
+
+```bash
+kubectl top nodes
+kubectl top pods
+```
+
+### Шаг 5. Настройка Horizontal Pod Autoscaler (HPA)
+
+Настройте автоскейлинг для Deployment `hwboard-deployment`. Проверьте состояние HPA:
+
+```bash
+kubectl autoscale deployment hwboard-deployment --cpu-percent=50 --min=2 --max=5
+kubectl get hpa
+```
+
+`Примечание`: HPA будет автоматически увеличивать/уменьшать количество подов в зависимости от загрузки CPU.
+
+### Шаг 6. Установка Prometheus и Grafana через Helm
+
+Добавьте репозиторий Helm и обновите кеш:
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+
+Установите `kube-prometheus-stack` в namespace `monitoring`:
+
+```bash
+helm install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace
+```
+
+Проверьте поды и сервисы в monitoring:
+
+```bash
+kubectl get pods -n monitoring | grep prometheus
+kubectl get svc -n monitoring | grep grafana
+```
+
+Получите пароль для входа в Grafana:
+
+(PowerShell)
+```bash
+kubectl -n monitoring get secret prometheus-grafana -o jsonpath="{.data.admin-password}" | ForEach-Object { [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_)) }
+```
+
+Логин: `admin` 
+
+Пароль: `<полученный пароль>`
+
+Откройте UI Grafana в браузере:
+
+```bash
+minikube service prometheus-grafana -n monitoring
+```
+
+### Шаг 7. Создание дашборда в Grafana
+
+В левом меню Grafana выберите Dashboards → New → New Dashboard.
+Нажмите Add a new panel.
+
+**Добавление графика CPU**
+
+Datasource: Prometheus
+
+Query:
+```
+ sum(rate(container_cpu_usage_seconds_total{namespace="default", pod=~"hwboard-deployment-.*"}[2m])) by (pod)
+```
+
+Legend: {{pod}}
+
+**Добавление графика памяти**
+  
+Query:
+```
+sum(container_memory_usage_bytes{namespace="default", pod=~"hwboard-deployment-.*"}) by (pod)
+```
+
+Legend: {{pod}}
+
+
+**Отслеживание количества реплик**
+  
+Query:
+```
+kube_deployment_status_replicas{deployment="hwboard-deployment"}
+```
+
+### Дополнительные команды
+
+Проброс порта к приложению (если нужно локально):
+
+```bash
+kubectl port-forward service/hwboard-service 8000:8000
+```
+
+Просмотр логов пода:
+
+```bash
+kubectl logs -l app=hwboard
+```
+
+Удаление ресурсов после завершения работы:
+
+```bash
+helm uninstall prometheus -n monitoring
+kubectl delete hpa hwboard-deployment
+kubectl delete -f deployment.yaml
+kubectl delete -f service.yaml
+minikube stop
+```
+
+### Чему мы научились
+
+* Устанавливать и настраивать Minikube для локального тестирования Kubernetes-кластера.
+  
+* Собирать Docker-образы приложений и деплойть их в Kubernetes.
+  
+* Создавать Deployment и Service, обеспечивающие высокую доступность и сетевой доступ.
+  
+* Интегрировать Metrics Server для сбора показателей использования ресурсов.
+  
+* Настраивать горизонтальное автоскейлирование (HPA) для динамического масштабирования подов на основе метрик CPU.
+  
+* Устанавливать Prometheus и Grafana через Helm-чарты для мониторинга инфраструктуры.
+
+* Создавать пользовательские дашборды в Grafana и визуализировать ключевые метрики приложения.
+
 
 ### Демонстрация 
 
@@ -51,7 +305,8 @@ Frontend (React + Apollo Client) → API Gateway (GraphQL Gateway) → Микр�
 Для запуска приложения необходимо открыть как проект папку library-service (находится в папке lab-2), перейти в разных окнах терминала в папки books-service, members-service, loans-service и запустить каждый из них командой `node index.js`. Для одновременной работы с микросервисами стоит перейти в папку gateway и запустить единый GraphQL Gateway аналогичной командой `node index.js`. Чтобы протестировать приложение со стороны клиента, необходимо перейти в папку library-frontend и выполнить запуск с помощью команды `npm start`.
 
 ### Демонстрация 
-TBD
+
+https://drive.google.com/file/d/1vxMlRH2uY47xELbGEXjifUOqKWOPnkJc/view?usp=sharing
 
 ## ЛР-3. Работа с Big Data
 
