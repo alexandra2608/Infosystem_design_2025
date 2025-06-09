@@ -529,7 +529,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## Технические детали
+### Технические детали
 
 - CSV-парсинг: Pandas + `parsers.py`.  
 - Enrichment: OMDb/TMDb через `requests`, кеш в JSON.  
