@@ -435,6 +435,7 @@ https://drive.google.com/file/d/1vxMlRH2uY47xELbGEXjifUOqKWOPnkJc/view?usp=shari
 
 ## Предварительные требования
 
+- Из раздела **ссылки** скачайте Data из гугл-диска, в которой сожержатся модель. Добавьте файл в директорию /app
 - **Python 3.8+**  
 - **Git**  
 - Файлы CSV от Letterboxd:  
@@ -556,6 +557,14 @@ dashboxd/
 ---
 
 ## Ссылки
+
+## Data проекта
+
+https://drive.google.com/file/d/1sdWcGl8fiCEueEXiU2WlAA0MzOvjp3dK/view?usp=sharing
+
+## Тренирока рекомендательной системы
+
+https://colab.research.google.com/drive/19Rw5h_SKm05GAL7BY6Hrkb20Kztz35PX?usp=sharing
 
 ### Демонстрация 
 
