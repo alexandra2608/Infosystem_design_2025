@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Data | DashBoxd</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url("{{ url_for('static', path='dashboxd_bg.png') }}") center center / cover no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.08);
+            z-index: 1;
+        }
+        .center-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50px;
+            padding: 44px;
+            width: 700px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            background: rgba(239,239,239,0.15);
+            border: 2px solid #5E5E5E;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .main-title {
+            font-size: 35px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .subtitle {
+            font-size: 28px;
+            font-weight: 400;
+            color: #fff;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .instr-link {
+            color: #fff;
+            text-decoration: underline;
+            font-size: 28px;
+            font-weight: 400;
+            cursor: pointer;
+        }
+        .instr-link:hover {
+            opacity: 0.7;
+        }
+        .desc {
+            font-size: 20px;
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 36px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .file-grid {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 36px;
+            justify-content: center;
+        }
+        .file-box {
+            width: 103px;
+            height: 103px;
+            background: #EFEFEF;
+            border: 1.5px solid #CACACA;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: border 0.2s;
+        }
+        .file-box.selected {
+            border: 2px solid #5E5E5E;
+        }
+        .file-box input[type="file"] {
+            display: none;
+        }
+        .file-label {
+            font-size: 14px;
+            color: #5E5E5E;
+            margin-top: 8px;
+            text-align: center;
+            font-weight: 400;
+        }
+        .plus, .check {
+            font-size: 38px;
+            color: #5E5E5E;
+            font-weight: 500;
+            user-select: none;
+        }
+        .check {
+            color: #000;
+            font-size: 40px;
+            font-weight: 600;
+        }
+        .analyse-btn {
+            width: 635px;
+            height: 76px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 25px;
+            font-size: 30px;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-bottom: 44px;
+            transition: box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .analyse-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 16px;
+            margin-top: 18px;
+            text-align: center;
+            font-weight: 400;
+        }
+        @media (max-width: 800px) {
+            .center-card {
+                width: 95vw;
+                padding: 20px;
+            }
+            .analyse-btn {
+                width: 90vw;
+                min-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <form class="center-card" id="uploadForm" enctype="multipart/form-data" autocomplete="off" onsubmit="return handleSubmit(event)">
+        <div class="main-title">Upload your data from Letterboxd</div>
+        <div class="subtitle">
+            <a href="/instruction" class="instr-link">Here's the instruction on how to do it</a>
+        </div>
+        <div class="desc">
+            DashBoxd will then analyse it<br>
+            and you will get a dashboard<br>
+            with your personal film watching trends<br>
+            and recommendations
+        </div>
+        <div class="file-grid">
+            <div class="file-box" id="box-ratings">
+                <label>
+                    <input type="file" name="ratings" accept=".csv" onchange="handleFileChange(event, 'ratings.csv', 'box-ratings')">
+                    <span class="plus" id="plus-ratings">+</span>
+                    <span class="check" id="check-ratings" style="display:none">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 13L10 17L18 7" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </label>
+                <div class="file-label">ratings.csv</div>
+            </div>
+            <div class="file-box" id="box-watched">
+                <label>
+                    <input type="file" name="watched" accept=".csv" onchange="handleFileChange(event, 'watched.csv', 'box-watched')">
+                    <span class="plus" id="plus-watched">+</span>
+                    <span class="check" id="check-watched" style="display:none">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 13L10 17L18 7" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </label>
+                <div class="file-label">watched.csv</div>
+            </div>
+            <div class="file-box" id="box-diary">
+                <label>
+                    <input type="file" name="diary" accept=".csv" onchange="handleFileChange(event, 'diary.csv', 'box-diary')">
+                    <span class="plus" id="plus-diary">+</span>
+                    <span class="check" id="check-diary" style="display:none">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 13L10 17L18 7" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </label>
+                <div class="file-label">diary.csv</div>
+            </div>
+            <div class="file-box" id="box-profile">
+                <label>
+                    <input type="file" name="profile" accept=".csv" onchange="handleFileChange(event, 'profile.csv', 'box-profile')">
+                    <span class="plus" id="plus-profile">+</span>
+                    <span class="check" id="check-profile" style="display:none">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 13L10 17L18 7" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </label>
+                <div class="file-label">profile.csv</div>
+            </div>
+            <div class="file-box" id="box-reviews">
+                <label>
+                    <input type="file" name="reviews" accept=".csv" onchange="handleFileChange(event, 'reviews.csv', 'box-reviews')">
+                    <span class="plus" id="plus-reviews">+</span>
+                    <span class="check" id="check-reviews" style="display:none">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 13L10 17L18 7" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </label>
+                <div class="file-label">reviews.csv</div>
+            </div>
+        </div>
+        <button class="analyse-btn" id="analyseBtn" type="submit" disabled>Analyse</button>
+        <div class="error-msg" id="errorMsg"></div>
+    </form>
+    <script>
+        const requiredFiles = ["ratings.csv", "watched.csv", "diary.csv", "profile.csv", "reviews.csv"];
+        let selectedFiles = {};
+
+        function handleFileChange(event, expectedName, boxId) {
+            const file = event.target.files[0];
+            const plus = document.getElementById('plus-' + boxId.split('-')[1]);
+            const check = document.getElementById('check-' + boxId.split('-')[1]);
+            const box = document.getElementById(boxId);
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.textContent = "";
+
+            if (file && file.name === expectedName) {
+                selectedFiles[expectedName] = file;
+                plus.style.display = "none";
+                check.style.display = "block";
+                box.classList.add("selected");
+            } else {
+                event.target.value = "";
+                plus.style.display = "block";
+                check.style.display = "none";
+                box.classList.remove("selected");
+                errorMsg.textContent = "Please upload only the original exported files from Letterboxd as described in the instructions. The file must be named: " + expectedName;
+                delete selectedFiles[expectedName];
+            }
+
+            document.getElementById('analyseBtn').disabled = !requiredFiles.every(f => selectedFiles[f]);
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.textContent = "";
+
+            if (!requiredFiles.every(f => selectedFiles[f])) {
+                errorMsg.textContent = "Please upload all five required files before proceeding.";
+                return false;
+            }
+
+            const formData = new FormData();
+            requiredFiles.forEach(name => formData.append("files", selectedFiles[name], name));
+
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(resp => {
+                if (resp.ok) {
+                    window.location.href = "/dashboard";
+                } else {
+                    errorMsg.textContent = "Upload failed. Please try again.";
+                }
+            })
+            .catch(() => {
+                errorMsg.textContent = "Upload failed. Please try again.";
+            });
+
+            return false;
+        }
+    </script>
+</body>
+</html>

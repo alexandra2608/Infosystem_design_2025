@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard | DashBoxd</title>
+  <link
+    href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+      background: url("{{ url_for('static', path='dashboxd_bg.png') }}")
+        center/cover no-repeat fixed;
+      color: #fff;
+    }
+    .wrapper {
+      padding: 40px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .card {
+      background: rgba(239,239,239,0.15);
+      border: 2px solid #5e5e5e;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(20px);
+      box-sizing: border-box;
+      width: 1284px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* === объединённая первая+вторая секции === */
+    .top-row {
+      display: flex;
+      gap: 5px;
+    }
+    .metrics {
+      width: 439px;
+      display: grid;
+      grid-template-columns: 217px 217px;
+      grid-template-rows: 139px 139px;
+      gap: 5px;
+    }
+    .metric {
+      position: relative;
+      background: rgba(255,255,255,0.2);
+      border-radius: 25px;
+      padding: 12px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      text-align: center;
+    }
+    .metric.white { background: #fff; color: #000; }
+    .metric .value {
+      margin-bottom: 0;
+      font-size: 90px;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .metric.month .value {
+      font-size: 30px;
+      margin-bottom: 6px;
+    }
+    .metric .label {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 400;
+    }
+
+    .director-card {
+      width: 399px;
+      display: flex;
+      padding: 20px 24px 24px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 25px;
+      box-sizing: border-box;
+    }
+    .director-card .directors-list {
+      flex: 1;
+    }
+    .director-card .card-title {
+      font-size: 25px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      text-align: left;
+    }
+    .director-card ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .director-card li {
+      font-size: 17px;
+      margin-bottom: 2px;
+      font-weight: 400;
+    }
+    .director-card li:first-child { font-weight: 700; }
+    .director-photo {
+      margin-left: 24px;
+    }
+    .director-photo img {
+      width: 153px;
+      height: 233px;
+      border-radius: 16px;
+      object-fit: cover;
+      background: #efefef;
+      display: block;
+    }
+
+    .actor-card {
+      width: 386px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 24px 24px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 25px;
+      box-sizing: border-box;
+    }
+    .actor-card .card-title {
+      font-size: 25px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      text-align: left;
+    }
+    .actors-row {
+      display: flex;
+      gap: 18px;
+    }
+    .actor {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .actor-name, .actor-surname {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    .actor-surname { margin-bottom: 6px; }
+    .actor img {
+      width: 100px;
+      height: 150px;
+      border-radius: 16px;
+      object-fit: cover;
+      background: #efefef;
+    }
+
+    .map-container {
+      height: 395.5px;
+      display: flex;
+      gap: 50px;
+      margin-top: 20px;
+    }
+    .map-left {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      border-radius: 25px;
+    }
+    #countryMap {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
+    .map-right {
+      width: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+      color: #fff;
+    }
+    .map-right .title {
+      font-size: 40px;
+      font-weight: 600;
+      margin-right: 20px;
+    }
+    .map-right .desc {
+      font-size: 25px;
+      font-weight: 400;
+      line-height: 1.4;
+      text-align: right;
+      margin-right: 20px;
+    }
+    /* === 3) Recommendations внутри той же карточки === */
+    .rec-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+      gap: 20px;
+    }
+    .rec-section .rec-header {
+      font-size: 44px;
+      font-weight: 600;
+      margin: 0;
+      color: #fff;
+      text-align: center;
+    }
+    .rec-section .rec-subheader {
+      font-size: 30px;
+      font-weight: 400;
+      margin: 0;
+      color: #fff;
+      text-align: center;
+    }
+    .rec-search-bar {
+      width: 1006px;
+      height: 103px;
+      border: 2px solid #e6e6e6;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+    .rec-search-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 34px;
+      font-weight: 600;
+      font-family: "Poppins", sans-serif;
+      color: #c5c5c5;
+    }
+    .rec-search-bar button {
+      width: 48px;
+      height: 48px;
+      border: none;
+      background: #e6e6e6;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .rec-search-bar button img {
+      width: 24px;
+      height: 24px;
+    }
+    .rec-list {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      width: 100%;
+    }
+    .rec-item {
+      width: 177px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .rec-item .movie-title {
+      font-size: 29px;
+      font-weight: 400;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+    }
+    .rec-item img {
+      width: 177px;
+      height: 266px;
+      border-radius: 25px;
+      object-fit: cover;
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="top-row">
+        <div class="metrics">
+          <div class="metric white">
+            <div class="value">{{ stats.total_watched }}</div>
+            <div class="label">films watched</div>
+          </div>
+          <div class="metric semi">
+            <div class="value">{{ stats.total_rated }}</div>
+            <div class="label">films rated</div>
+          </div>
+          <div class="metric semi">
+            <div class="value">{{ stats.avg_rating|round(1) }}</div>
+            <div class="label">average rating</div>
+          </div>
+          <div class="metric white month">
+            <div class="value">{{ stats.most_active_month_fmt }}</div>
+            <div class="label">most active month</div>
+          </div>
+        </div>
+        <div class="director-card">
+          <div class="directors-list">
+            <h2 class="card-title">TOP directors</h2>
+            <ol>
+              {% for director in top_directors %}
+                <li>
+                  {% if loop.index0 == 0 %}
+                    <span style="font-weight:700">{{ director }}</span>
+                  {% else %}
+                    {{ director }}
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ol>
+          </div>
+          <div class="director-photo">
+            {% if director_images[0] %}
+              <img src="{{ director_images[0] }}" alt="" />
+            {% else %}
+              <img src="/static/person-placeholder.png" alt="" />
+            {% endif %}
+          </div>
+        </div>
+        <div class="actor-card">
+          <h2 class="card-title">TOP-3 actors</h2>
+          <div class="actors-row">
+            {% for i in range(top_actors|length) %}
+              {% set actor = top_actors[i] %}
+              {% set img = actor_images[i] %}
+              <div class="actor">
+                {% set parts = actor.split(' ',1) %}
+                <div class="actor-name">{{ parts[0] }}</div>
+                <div class="actor-surname">{{ parts[1] if parts|length>1 else "" }}</div>
+                {% if img %}
+                  <img src="{{ img }}" alt="" />
+                {% else %}
+                  <img src="/static/person-placeholder.png" alt="" />
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="map-container">
+        <div class="map-left">
+          <div id="countryMap"></div>
+        </div>
+        <div class="map-right">
+          <div class="title">Film origin map</div>
+          <div class="desc">
+            Hover the country<br/>
+            on the map to see<br/>
+            the exact amount<br/>
+            of films you’ve watched<br/>
+            which were made there
+          </div>
+        </div>
+      </div>
+      <div class="rec-section">
+        <h2 class="rec-header">Get the perfect film recommendations right here</h2>
+        <p class="rec-subheader">Type in the film and its release year in brackets</p>
+        <div class="rec-search-bar">
+          <input id="rec-input" type="text" placeholder="Gladiator (2000)" />
+          <button id="rec-btn">
+            <svg width="24" height="24" fill="#000" viewBox="0 0 24 24">
+              <path d="M21.71 20.29l-3.4-3.39a9 9 0 10-1.41 1.41l3.4 3.39a1 1 0 001.41-1.41zM11 18a7 7 0 117-7 7 7 0 01-7 7z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="rec-list" id="rec-list">
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
+    const rawStats = JSON.parse('{{ country_stats | tojson | safe }}');
+    const aliasMap = {
+      "United States of America": ["USA","US","United States","U.S.A."],
+      "United Kingdom":          ["UK","U.K.","Great Britain","England"]
+    };
+    function getCount(name) {
+      if (rawStats[name]!=null) return rawStats[name];
+      for (const [canon,als] of Object.entries(aliasMap))
+        if (name===canon)
+          for (const a of als)
+            if (rawStats[a]!=null) return rawStats[a];
+      return 0;
+    }
+    fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json")
+      .then(r=>r.json()).then(worldGeoJson=>{
+        const allCountries=worldGeoJson.features.map(f=>f.properties.name);
+        const z=allCountries.map(n=>getCount(n)), m=Math.max(...z,1);
+        Plotly.newPlot("countryMap",[{
+          type:"choropleth",
+          geojson:worldGeoJson,
+          locations:allCountries,
+          z:z,
+          featureidkey:"properties.name",
+          colorscale:[[0,"#ffffff"],[1,"#3967D2"]],
+          zmin:0, zmax:m,
+          marker:{line:{color:"#000",width:0.5}},
+          showscale:false
+        }],{
+          geo:{projection:{type:"robinson"},showframe:false,showcoastlines:false,showland:true,landcolor:"rgba(0,0,0,0)"},
+          margin:{t:0,b:0,l:0,r:0},
+          paper_bgcolor:"rgba(0,0,0,0)",plot_bgcolor:"rgba(0,0,0,0)"
+        });
+      }).catch(console.error);
+  </script>
+  <script>
+    document.getElementById('rec-btn').addEventListener('click', () => {
+      const title = document.getElementById('rec-input').value.trim();
+      if (!title) return;
+      fetch(`/recommend?title=${encodeURIComponent(title)}`)
+        .then(r => r.json())
+        .then(data => {
+          const list = document.getElementById('rec-list');
+          list.innerHTML = '';
+          data.recommendations.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'rec-item';
+
+            const img = document.createElement('img');
+            img.src = item.poster || '/static/placeholder.png';
+
+            const t = document.createElement('div');
+            t.className = 'movie-title';
+            t.textContent = item.title;
+
+            div.append(img, t);
+            list.append(div);
+          });
+        })
+        .catch(() => alert("Movie not found, try 'Title (YYYY)'"));
+    });
+  </script>
+</body>
+</html>
