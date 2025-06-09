@@ -23,6 +23,8 @@
 6. Установка Prometheus и Grafana с помощью Helm.
 7. Создание дашборда в Grafana для мониторинга нагрузки приложения.
 
+---
+
 ### Предварительные требования
 
 - Установленный Docker (версия ≥ 20.10).
@@ -250,6 +252,8 @@ kubectl delete -f service.yaml
 minikube stop
 ```
 
+---
+
 ### Чему мы научились
 
 * Устанавливать и настраивать Minikube для локального тестирования Kubernetes-кластера.
@@ -266,10 +270,13 @@ minikube stop
 
 * Создавать пользовательские дашборды в Grafana и визуализировать ключевые метрики приложения.
 
+---
 
 ### Демонстрация 
 
 https://drive.google.com/file/d/1_lTfB5zFJjNnOQQYoOQuQPXZ9pxdZpDX/view?usp=drive_link
+
+---
 
 ## ЛР-2. Разработка микросервисной архитектуры с GraphQL
 
@@ -287,11 +294,20 @@ https://drive.google.com/file/d/1_lTfB5zFJjNnOQQYoOQuQPXZ9pxdZpDX/view?usp=drive
 - Установленный Node.js (версия ≥ 22.11.0).
 - Установленная СУБД PostgreSQL (версия ≥ 14).
 
+---
+
+### Обзор
+
 В рамках выполнения лабораторной работы была выбрана тема "Система управления библиотекой". Для ее реализации было создано 3 микросервиса - Книги, Пользователи и Выдачи.
 
 ![image](https://github.com/user-attachments/assets/b962b70f-4083-47b7-9002-27c8d7b80fad)
 
-Структура приложения следующая:
+**Схема взаимодействия:**
+Frontend (React + Apollo Client) → API Gateway (GraphQL Gateway) → Микросервисы (Books, Members, Loans) → База данных (PostgreSQL)
+
+---
+
+### Структура
 - books-service - микросервис Books
 - members-service - микросервис Members
 - loans-service - микросервис Loans
@@ -301,8 +317,7 @@ https://drive.google.com/file/d/1_lTfB5zFJjNnOQQYoOQuQPXZ9pxdZpDX/view?usp=drive
 
 В папке каждого микросервиса находятся файлы `schema.js` (GraphQL-схема микросервиса), `resolvers.js`(функции-обработчики GraphQL-запросов) и `index.js`(запуск микросервиса). В папке gateway находится файл `index.js` - GraphQL API Gateway (Apollo Gateway).
 
-**Схема взаимодействия:**
-Frontend (React + Apollo Client) → API Gateway (GraphQL Gateway) → Микросервисы (Books, Members, Loans) → База данных (PostgreSQL)
+---
 
 ### Инструкция
 
@@ -374,6 +389,8 @@ CREATE TABLE loans (
 2. Для одновременной работы с микросервисами стоит перейти в папку gateway и запустить единый GraphQL Gateway аналогичной командой.
 3. Чтобы протестировать приложение со стороны клиента, необходимо перейти в папку library-frontend и выполнить запуск с помощью команды `npm start`.
 
+---
+
 ### Чему мы научились
 
 * Инициализировать микросервисы и настраивать раздельный запуск каждого сервиса.
@@ -386,56 +403,23 @@ CREATE TABLE loans (
   
 * Создавать клиентское приложение на React и настраивать Apollo Client для общения с GraphQL Gateway.
 
+---
 
 ### Демонстрация 
 
 https://drive.google.com/file/d/1vxMlRH2uY47xELbGEXjifUOqKWOPnkJc/view?usp=sharing
 
+---
 
 ## ЛР-3. Работа с Big Data
 
-**Цель:** разработать простое приложение для работы с большими данными.
+Цель: разработать простое приложение для работы с большими данными.
 
-**Технологии:** FastAPI, Uvicorn, Jinja2, Pandas, Plotly, OMDb/TMDb API, Pickle  
+Технологии: FastAPI, Uvicorn, Jinja2, Pandas, Plotly, OMDb/TMDb API, Pickle  
 
----
+### Предварительные требования
 
-## Содержание
-
-1. Обзор проекта  
-2. Предварительные требования  
-3. Установка  
-4. Запуск приложения  
-5. Использование  
-   - Загрузка данных  
-   - Дашборд  
-   - Рекомендательная система  
-6. Структура проекта  
-7. Технические детали  
-8. Чему мы научились
-9. Ссылки 
-
----
-
-## Обзор проекта
-
-Приложение **DashBoxd** позволяет:
-
-- Загружать CSV-экспорт данных Letterboxd (`ratings.csv`, `watched.csv`, `diary.csv`, `profile.csv`, `reviews.csv`).  
-- Считать основные метрики:  
-  - films watched  
-  - films rated  
-  - average rating  
-  - most active month  
-- Отображать **топ-7 режиссёров** и **топ-3 актёров** с их фотографиями (через TMDb).  
-- Строить **хлороплет-карту** стран-производителей фильмов (Plotly + GeoJSON).  
-- Давать **5 рекомендаций** похожих фильмов (матрица similarity) и подтягивать их постеры из OMDb.
-
----
-
-## Предварительные требования
-
-- Из раздела **ссылки** скачайте Data из гугл-диска, в которой сожержатся модель. Добавьте файл в директорию /app
+- Из раздела **ссылки** скачайте Data из гугл-диска, в которой содержится модель. Добавьте файл в директорию /app
 - **Python 3.8+**  
 - **Git**  
 - Файлы CSV от Letterboxd:  
@@ -455,67 +439,23 @@ https://drive.google.com/file/d/1vxMlRH2uY47xELbGEXjifUOqKWOPnkJc/view?usp=shari
 
 ---
 
-## Установка
+### Обзор проекта
 
-```bash
-git clone <репозиторий_URL> dashboxd  
-cd dashboxd  
-pip install -r requirements.txt  
-```
+Приложение **DashBoxd** позволяет:
 
----
-
-## Запуск приложения
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Откройте в браузере:
-
-- http://127.0.0.1:8000 — первая страница
-- http://127.0.0.1:8000/upload — страница для загрузки CSV  
-- http://127.0.0.1:8000/dashboard — основной дашборд после загрузки
+- Загружать CSV-экспорт данных Letterboxd (`ratings.csv`, `watched.csv`, `diary.csv`, `profile.csv`, `reviews.csv`).  
+- Считать основные метрики:  
+  - films watched  
+  - films rated  
+  - average rating  
+  - most active month  
+- Отображать **топ-7 режиссёров** и **топ-3 актёров** с их фотографиями (через TMDb).  
+- Строить **хлороплет-карту** стран-производителей фильмов (Plotly + GeoJSON).  
+- Давать **5 рекомендаций** похожих фильмов (матрица similarity) и подтягивать их постеры из OMDb.
 
 ---
 
-## Использование
-
-### 1. Загрузка данных
-
-1. Перейдите на http://127.0.0.1:8000/.
-2. Нажмите на кнопку **Get Started**.
-3. Прочитайте инструкцию по экспорту файлов из Letterboxd по ссылке **Here's the instruction on how to do it**.
-4. В соответствии с инструкцией, экспортируйте данные из профиля и вернитесь на страницу `/upload`, нажав на кнопку **Back to the uploading page**.
-5. Загрузите файлы:
-   ```
-   ratings.csv, watched.csv, diary.csv, profile.csv, reviews.csv
-   ```
-6. Нажмите **Analyse** — после успешной загрузки откроется `/dashboard`.
-
-### 2. Дашборд
-
-- **Метрики**: films watched, films rated, average rating, most active month  
-- **Top Directors** и **Top-3 Actors**: списки с фото  
-- **Film origin map**: чем темнее страна на карте, тем больше фильмов, снятых там, вы посмотрели; при наведении на страну вы увидите точное число фильмов из каждой страны
-
-### 3. Рекомендательная система
-
-1. Введите в поле название фильма и его год выпуска в скобках (например, `Gladiator (2000)`).  
-2. Нажмите на кнопку-лупу.  
-3. Появятся 5 карточек рекомендаций:  
-   - Название  
-   - Постер
-
-Или из терминала:
-
-```bash
-curl "http://127.0.0.1:8000/recommend?title=Gladiator%20(2000)"
-```
-
----
-
-## Структура проекта
+### Структура проекта
 
 ```
 dashboxd/
@@ -529,6 +469,61 @@ dashboxd/
 ├── requirements.txt    # зависимости  
 └── .env                # DATA_DIR, API ключи  
 ```
+
+---
+
+### Инструкция
+
+#### Шаг 1. Загрузка данных
+
+1. Перейдите на http://127.0.0.1:8000/.
+2. Нажмите на кнопку **Get Started**.
+3. Прочитайте инструкцию по экспорту файлов из Letterboxd по ссылке **Here's the instruction on how to do it**.
+4. В соответствии с инструкцией, экспортируйте данные из профиля и вернитесь на страницу `/upload`, нажав на кнопку **Back to the uploading page**.
+5. Загрузите файлы:
+   ```
+   ratings.csv, watched.csv, diary.csv, profile.csv, reviews.csv
+   ```
+6. Нажмите **Analyse** — после успешной загрузки откроется `/dashboard`.
+
+#### Шаг 2. Дашборд
+
+- **Метрики**: films watched, films rated, average rating, most active month  
+- **Top Directors** и **Top-3 Actors**: списки с фото  
+- **Film origin map**: чем темнее страна на карте, тем больше фильмов, снятых там, вы посмотрели; при наведении на страну вы увидите точное число фильмов из каждой страны
+
+#### Шаг 3. Рекомендательная система
+
+1. Введите в поле название фильма и его год выпуска в скобках (например, `Gladiator (2000)`).  
+2. Нажмите на кнопку-лупу.  
+3. Появятся 5 карточек рекомендаций:  
+   - Название  
+   - Постер
+
+Или из терминала:
+
+```bash
+curl "http://127.0.0.1:8000/recommend?title=Gladiator%20(2000)"
+```
+
+#### Шаг 4. Запуск
+```bash
+git clone <репозиторий_URL> dashboxd  
+cd dashboxd  
+pip install -r requirements.txt  
+```
+
+Запуск самого приложения:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Откройте в браузере:
+
+- http://127.0.0.1:8000 — первая страница
+- http://127.0.0.1:8000/upload — страница для загрузки CSV  
+- http://127.0.0.1:8000/dashboard — основной дашборд после загрузки
 
 ---
 
@@ -556,24 +551,25 @@ dashboxd/
 
 ---
 
-## Ссылки
+### Ссылки
 
-## Data проекта
+#### Data проекта
 
 https://drive.google.com/file/d/1sdWcGl8fiCEueEXiU2WlAA0MzOvjp3dK/view?usp=sharing
 
-## Тренирока рекомендательной системы
+#### Тренирока рекомендательной системы
 
 https://colab.research.google.com/drive/19Rw5h_SKm05GAL7BY6Hrkb20Kztz35PX?usp=sharing
 
-### Демонстрация 
-
-https://drive.google.com/file/d/1FyctvvOtnhzaMQjz0znAkPsKNMe7Ik4t/view?usp=sharing
-
-### Документация: 
+#### Документация: 
 
   - FastAPI: https://fastapi.tiangolo.com/  
   - Plotly: https://plotly.com/python/choropleth-maps/  
   - OMDb API: http://www.omdbapi.com/  
   - TMDb API: https://developers.themoviedb.org/  
 
+---
+
+### Демонстрация 
+
+https://drive.google.com/file/d/1FyctvvOtnhzaMQjz0znAkPsKNMe7Ik4t/view?usp=sharing
