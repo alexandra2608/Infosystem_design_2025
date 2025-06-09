@@ -394,6 +394,177 @@ https://drive.google.com/file/d/1vxMlRH2uY47xELbGEXjifUOqKWOPnkJc/view?usp=shari
 
 ## ЛР-3. Работа с Big Data
 
-Цель: разработать простое приложение для работы с большими данными.
+**Цель:** разработать простое приложение для работы с большими данными.
 
-TBD
+**Технологии:** FastAPI, Uvicorn, Jinja2, Pandas, Plotly, OMDb/TMDb API, Pickle  
+
+---
+
+## Содержание
+
+1. Обзор проекта  
+2. Предварительные требования  
+3. Установка  
+4. Запуск приложения  
+5. Использование  
+   - Загрузка данных  
+   - Дашборд  
+   - Рекомендательная система  
+6. Структура проекта  
+7. Технические детали  
+8. Чему мы научились
+9. Ссылки 
+
+---
+
+## Обзор проекта
+
+Приложение **DashBoxd** позволяет:
+
+- Загружать CSV-экспорт данных Letterboxd (`ratings.csv`, `watched.csv`, `diary.csv`, `profile.csv`, `reviews.csv`).  
+- Считать основные метрики:  
+  - films watched  
+  - films rated  
+  - average rating  
+  - most active month  
+- Отображать **топ-7 режиссёров** и **топ-3 актёров** с их фотографиями (через TMDb).  
+- Строить **хлороплет-карту** стран-производителей фильмов (Plotly + GeoJSON).  
+- Давать **5 рекомендаций** похожих фильмов (матрица similarity) и подтягивать их постеры из OMDb.
+
+---
+
+## Предварительные требования
+
+- **Python 3.8+**  
+- **Git**  
+- Файлы CSV от Letterboxd:  
+  ```
+  ratings.csv  
+  watched.csv  
+  diary.csv  
+  profile.csv  
+  reviews.csv  
+  ```  
+- Файл `.env` в корне проекта с содержимым:
+  ```
+  DATA_DIR=app/data  
+  OMDB_API_KEY=<ваш_OMDb_ключ>  
+  TMDB_API_KEY=<ваш_TMDb_ключ>  
+  ```
+
+---
+
+## Установка
+
+```bash
+git clone <репозиторий_URL> dashboxd  
+cd dashboxd  
+pip install -r requirements.txt  
+```
+
+---
+
+## Запуск приложения
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Откройте в браузере:
+
+- http://127.0.0.1:8000 — первая страница
+- http://127.0.0.1:8000/upload — страница для загрузки CSV  
+- http://127.0.0.1:8000/dashboard — основной дашборд после загрузки
+
+---
+
+## Использование
+
+### 1. Загрузка данных
+
+1. Перейдите на http://127.0.0.1:8000/.
+2. Нажмите на кнопку **Get Started**.
+3. Прочитайте инструкцию по экспорту файлов из Letterboxd по ссылке **Here's the instruction on how to do it**.
+4. В соответствии с инструкцией, экспортируйте данные из профиля и вернитесь на страницу `/upload`, нажав на кнопку **Back to the uploading page**.
+5. Загрузите файлы:
+   ```
+   ratings.csv, watched.csv, diary.csv, profile.csv, reviews.csv
+   ```
+6. Нажмите **Analyse** — после успешной загрузки откроется `/dashboard`.
+
+### 2. Дашборд
+
+- **Метрики**: films watched, films rated, average rating, most active month  
+- **Top Directors** и **Top-3 Actors**: списки с фото  
+- **Film origin map**: чем темнее страна на карте, тем больше фильмов, снятых там, вы посмотрели; при наведении на страну вы увидите точное число фильмов из каждой страны
+
+### 3. Рекомендательная система
+
+1. Введите в поле название фильма и его год выпуска в скобках (например, `Gladiator (2000)`).  
+2. Нажмите на кнопку-лупу.  
+3. Появятся 5 карточек рекомендаций:  
+   - Название  
+   - Постер
+
+Или из терминала:
+
+```bash
+curl "http://127.0.0.1:8000/recommend?title=Gladiator%20(2000)"
+```
+
+---
+
+## Структура проекта
+
+```
+dashboxd/
+├── app/
+│   ├── main.py         # FastAPI-сервер  
+│   ├── analytics.py    # расчёт метрик и enrichment данных  
+│   ├── parsers.py      # загрузка и нормализация CSV  
+│   ├── utils.py        # клиенты OMDb/TMDb + кеширование  
+│   ├── templates/      # Jinja2 шаблоны (upload, dashboard)  
+│   └── static/         # стили, фон, placeholder, иконки  
+├── requirements.txt    # зависимости  
+└── .env                # DATA_DIR, API ключи  
+```
+
+---
+
+## Технические детали
+
+- CSV-парсинг: Pandas + `parsers.py`.  
+- Enrichment: OMDb/TMDb через `requests`, кеш в JSON.  
+- Карта: Plotly Choropleth + GeoJSON.  
+- Рекомендации: `movie_list.pkl`, `similarity.pkl`, `/recommend` делает бэкенд-запросы к OMDb.  
+- Интерфейс: единая карта с секциями Метрики, Карта, Рекомендации, стили по дизайну.
+
+---
+
+### Чему мы научились
+
+* Структурировать web-приложение на FastAPI + Jinja2.
+  
+* Загружать и парсить CSV-данные различной структуры.
+  
+* Обогащать данные сторонними APIs (OMDb, TMDb) с кешированием.
+  
+* Строить кастомную логику рекомендаций на основе similarity-матрицы.
+  
+* Визуализировать информацию: Plotly-карта, кастомный HTML/CSS-интерфейс.
+
+---
+
+## Ссылки
+
+### Демонстрация 
+
+https://drive.google.com/file/d/1FyctvvOtnhzaMQjz0znAkPsKNMe7Ik4t/view?usp=sharing
+
+### Документация: 
+
+  - FastAPI: https://fastapi.tiangolo.com/  
+  - Plotly: https://plotly.com/python/choropleth-maps/  
+  - OMDb API: http://www.omdbapi.com/  
+  - TMDb API: https://developers.themoviedb.org/  
+
